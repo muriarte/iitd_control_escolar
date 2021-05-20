@@ -1,50 +1,74 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:developer' as developer;
+import 'package:http/http.dart' as http;
+import 'package:iitd_control_escolar/src/repositories/common.dart';
 //import '../services/api_services/school_api_provider.dart';
 import '../domain/students/student.dart';
 import '../domain/students/student_repository.dart';
+import 'network_exception.dart';
 
 class StudentsFromApiRepository extends StudentRepository {
-  final students = [
-    Student(1, "JuanApi", "PerezApi", 24),
-    Student(2, "ElenaApi", "LaraApi", 22),
-    Student(3, "RaulApi", "LopezApi", 42)
-  ];
+  final List<Student> students = [];
+  String url;
+
+  StudentsFromApiRepository(String baseUrl) : url = baseUrl + "students";
 
   Future<List<Student>> getAll() async {
-    return students;
+    try {
+      developer.log("Calling endpoint $url",
+          name: "students_from_api_repository");
+
+      final response = await http.get(Uri.parse('$url'));
+      checkResponseAndThrowExceptionIfSomethingWentWrong(response);
+
+      developer.log("Returning student list", name:"students_from_api_repository");
+
+      return allStudentsFromJson(response.body);
+    } on IOException {
+
+      developer.log("IOException detected, throwing NetworkException",
+          name: "students_from_api_repository");
+
+      throw NetworkException();
+    }
+  }
+
+  Future<Student> get(int id) async {
+    try {
+      final response = await http.get(Uri.parse('$url/$id'));
+      checkResponseAndThrowExceptionIfSomethingWentWrong(response);
+      return studentFromJson(response.body);
+    } on IOException {
+      throw NetworkException();
+    }
   }
 
   Future<Student> save(Student student) async {
-    for (final st in students) {
-      if (st.id == student.id) {
-        st.firstName = student.firstName;
-        st.lastName = student.lastName;
-        st.age = student.age;
-        return st;
-      }
+    try {
+      final response = await http.post(Uri.parse('$url'),
+          body: jsonEncode(student.toJson()),
+          headers: {
+            HttpHeaders.acceptHeader: 'application/json',
+            HttpHeaders.contentTypeHeader: 'application/json'
+          });
+      checkResponseAndThrowExceptionIfSomethingWentWrong(response);
+      return studentFromJson(response.body);
+    } on IOException {
+      throw NetworkException();
     }
-    if (student.id > 0) {
-      var st = Student.byObject(student);
-      students.add(st);
-      return st;
-    }
-    var maxId = _getMaxId();
-    var st = Student(maxId, student.firstName, student.lastName, student.age);
-    students.add(st);
-    return st;
-  }
-
-  int _getMaxId() {
-    var maxId = 0;
-    for (final st in students) {
-      if (st.id > maxId) {
-        maxId = st.id;
-      }
-    }
-    return maxId;
   }
 
   Future<bool> delete(int id) async {
-    return true;
+    try {
+      final response = await http.delete(Uri.parse('$url/$id'), headers: {
+        HttpHeaders.acceptHeader: 'application/json',
+      });
+      checkResponseAndThrowExceptionIfSomethingWentWrong(response);
+      return true;
+    } on IOException {
+      throw NetworkException();
+    }
   }
 }

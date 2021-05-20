@@ -16,12 +16,13 @@ class StudentListing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _cubit = BlocProvider.of<StudentListingBloc>(context);
+    if (_cubit.state is StudentListingInitialState) _cubit.getStudentList();
     if (_cubit.state is! StudentListingLoadedState) return Container();
     List<Student> items = (_cubit.state as StudentListingLoadedState).students;
     return ListView(
       children: items.map((item) {
         return ListTile(
-          title: Text(item.firstName),
+          title: Text(item.nombres),
           onTap: () => itemSelectedCallback(item),
           selected: selectedItem == item,
         );

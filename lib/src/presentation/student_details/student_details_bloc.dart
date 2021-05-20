@@ -5,7 +5,7 @@ import 'package:iitd_control_escolar/src/presentation/student_details/student_de
 class StudentDetailsBloc extends Cubit<StudentDetailsState> {
   StudentDetailsBloc() : super(StudentInitialState());
 
-  /// Estblece el estudiante asociado a este estado
+  /// Establece el estudiante asociado a este estado
   Future<void> setStudent(Student item) async {
     final newState = StudentLoadedState(item, false, false);
     emit(newState);
@@ -26,10 +26,49 @@ class StudentDetailsBloc extends Cubit<StudentDetailsState> {
   }
 
   /// Actualiza los datos del estudiante
-  Future<void> updateItem(String firstName, String lastName, int age) async {
+  Future<void> updateItem(
+    String nombres,
+    String apellidos,
+    DateTime nacimiento,
+    String sexo,
+    String calle,
+    String numeroExt,
+    String numeroInt,
+    String colonia,
+    String municipio,
+    String estado,
+    String pais,
+    String cp,
+    String telCelular,
+    String telCasa,
+    String email,
+    DateTime fechaInicio,
+    String observaciones,
+    String activo,
+  ) async {
     final st = state as StudentLoadedState;
     final id = st.student?.id ?? 0;
-    final student = Student(id, firstName, lastName, age);
+    final student = Student(
+      id,
+      nombres,
+      apellidos,
+      nacimiento,
+      sexo,
+      calle,
+      numeroExt,
+      numeroInt,
+      colonia,
+      municipio,
+      estado,
+      pais,
+      cp,
+      telCelular,
+      telCasa,
+      email,
+      fechaInicio,
+      observaciones,
+      activo,
+    );
     emit(StudentLoadedState(student, st.isEditing, st.validate));
   }
 

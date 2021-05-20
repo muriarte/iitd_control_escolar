@@ -1,4 +1,4 @@
-//import 'dart:developer' as developer;
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iitd_control_escolar/src/presentation/student_details/student_details_bloc.dart';
@@ -38,29 +38,26 @@ class _MyHomePageState extends State<MyHomePage> {
       body: BlocConsumer<StudentListingBloc, StudentListingState>(
         bloc: BlocProvider.of<StudentListingBloc>(context),
         listener: (context, state) {
+          // Error state
           if (state is StudentListingErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text("Something went wrong:" + state.message),
               ),
             );
           }
         },
         builder: (context, state) {
-          // developer.log("Home page bloc builder 1\r\n");
+          developer.log("State ${state.runtimeType}", name: "home_page");
           if (state is StudentListingInitialState) {
-            // developer.log("Home page bloc builder 2\r\n");
             return Center(
               child: _buildInitialContent(),
             );
           } else if (state is StudentListingLoadingState) {
-            // developer.log("Home page bloc builder 3\r\n");
             return Center(
               child: Text("Por favor espere..."),
             );
           } else if (state is StudentListingLoadedState) {
-            // developer.log(
-            //     "Home page bloc builder 4: \r\n"); //${_itemCubit.state is StudentLoadedState ? (_itemCubit.state as StudentLoadedState).student?.firstName : "null"}\r\n");
             if (shortestSide < kTabletBreakpoint) {
               return _buildMobileLayout();
             } else {
@@ -78,17 +75,46 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       drawer: Drawer(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('This is the Drawer'),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(), //Close drawer
-                child: const Text('Close Drawer'),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('iitd Control escolar'),
+              decoration: BoxDecoration(
+                color: Colors.blue,
               ),
-            ],
-          ),
+            ),
+            ListTile(
+              title: Row(children: <Widget>[
+                Icon(Icons.contacts),
+                const Text('Students'),
+              ]),
+              onTap: () {
+                Navigator.of(context).pop();
+                BlocProvider.of<StudentListingBloc>(context).getStudentList();
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (BuildContext context) {
+                //       var cubit = BlocProvider.of<StudentListingBloc>(context);
+                //       return StudentListing(
+                //         itemSelectedCallback: (item) {
+                //           cubit.setSelectedItem(item);
+                //         },
+                //       );
+                //     },
+                //   ),
+                //   //(route) => true,
+                // );
+              },
+            ),
+            ListTile(
+              title: Row(children: <Widget>[
+                Icon(Icons.close),
+                const Text('Close'),
+              ]),
+              onTap: () => Navigator.of(context).pop(), //Close drawer
+            ),
+          ],
         ),
       ),
     );
@@ -96,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildMobileLayout() {
     // developer.log("Mobile layout builder\r\n");
+    developer.log("Building mobile layout", name: "home_page");
     return StudentListing(
       itemSelectedCallback: (item) {
         // developer.log("Mobile ItemSelectedCallback: ${item.firstName}\r\n");
@@ -103,8 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
           context,
           MaterialPageRoute(
             builder: (BuildContext context) {
-              // developer.log("Mobile layout MaterialPageRoute builder\r\n");
-              BlocProvider.of<StudentListingBloc>(context).setSelectedItem(item);
+              BlocProvider.of<StudentListingBloc>(context)
+                  .setSelectedItem(item);
               studentCubit.setStudent(item);
               return BlocProvider<StudentDetailsBloc>.value(
                 value: studentCubit,
@@ -122,8 +149,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildTabletLayout() {
     var cubit = BlocProvider.of<StudentListingBloc>(context);
-    studentCubit
-        .setStudent((cubit.state as StudentListingLoadedState).selectedStudent!);
+    developer.log("Building tablet layout", name: "home_page");
+    if ((cubit.state as StudentListingLoadedState).selectedStudent != null) {
+      studentCubit.setStudent(
+          (cubit.state as StudentListingLoadedState).selectedStudent!);
+    }
     // developer.log("Tablet layout builder\r\n");
     return Row(
       children: <Widget>[
@@ -131,15 +161,18 @@ class _MyHomePageState extends State<MyHomePage> {
           flex: 1,
           child: Material(
             elevation: 4.0,
-            child: StudentListing(
-              itemSelectedCallback: (item) {
-                // developer
-                //     .log("Tablet ItemSelectedCallback: ${item.firstName}\r\n");
-                cubit.setSelectedItem(item);
-              },
-              selectedItem:
-                  (cubit.state as StudentListingLoadedState).selectedStudent,
-            ),
+            child: (cubit.state as StudentListingLoadedState).selectedStudent !=
+                    null
+                ? StudentListing(
+                    itemSelectedCallback: (item) {
+                      // developer
+                      //     .log("Tablet ItemSelectedCallback: ${item.firstName}\r\n");
+                      cubit.setSelectedItem(item);
+                    },
+                    selectedItem: (cubit.state as StudentListingLoadedState)
+                        .selectedStudent,
+                  )
+                : Text("No hay estudiantesa registrados"),
           ),
         ),
         BlocProvider<StudentDetailsBloc>.value(
@@ -173,8 +206,21 @@ class _MyHomePageState extends State<MyHomePage> {
         Text("(blank)"),
         TextButton(
           onPressed: () {
-            var cubit = BlocProvider.of<StudentListingBloc>(context);
-            cubit.ageIncrement();
+            // var cubit = BlocProvider.of<StudentListingBloc>(context);
+            // cubit.ageIncrement();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  var cubit = BlocProvider.of<StudentListingBloc>(context);
+                  return StudentListing(
+                    itemSelectedCallback: (item) {
+                      cubit.setSelectedItem(item);
+                    },
+                  );
+                },
+              ),
+              //(route) => true,
+            );
           },
           child: Text("+"),
         ),

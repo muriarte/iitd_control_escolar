@@ -1,35 +1,43 @@
 //import 'package:flutter/foundation.dart';
+import 'dart:developer' as developer;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iitd_control_escolar/src/domain/students/student.dart';
 import 'package:iitd_control_escolar/src/presentation/student_listing/student_listing_state.dart';
 import 'package:iitd_control_escolar/src/domain/students/student_repository.dart';
+// import 'package:iitd_control_escolar/src/repositories/item_not_found_exception.dart';
 
 class StudentListingBloc extends Cubit<StudentListingState> {
   StudentListingBloc(this.studentsRepo) : super(StudentListingInitialState());
 
   final StudentRepository studentsRepo;
 
-  Future<void> ageIncrement() async {
-    if (state is StudentListingLoadedState) {
-      final st = state as StudentListingLoadedState;
-      if (st.selectedStudent == null)
-        emit(StudentListingState.loaded(st.students, null));
-      st.selectedStudent!.age += 1;
-      if (st.selectedStudent!.age == 20) {
-        emit(StudentListingState.error("Llegamos al 20!"));
-        return;
+  Future<void> getStudentList() async {
+    if (state is StudentListingInitialState) {
+      emit(StudentListingLoadingState());
+
+      try {
+        List<Student> items = await studentsRepo.getAll();
+
+        developer.log("${items.length} students returned",
+            name: "students_listing_bloc");
+
+        var st = StudentListingState.loaded(items, items[0]);
+
+        emit(st);
+      } catch (ex) {
+        emit(StudentListingErrorState(
+            "Error al obtener listado de estudiantes: " + ex.toString()));
       }
-      emit(StudentListingState.loaded(st.students, st.selectedStudent));
-    } else if (state is StudentListingInitialState) {
-      List<Student> items = await studentsRepo.getAll();
-      var st = StudentListingState.loaded(items, items[0]);
-      emit(st);
     }
   }
 
   /// Establece el item seleccionado de la lista de estudiantes
   Future<void> setSelectedItem(Student selectedItem) async {
     final st = state as StudentListingLoadedState;
+
+    developer.log("setSelectedState emitting loadedState",
+        name: "students_listing_bloc");
+
     emit(StudentListingState.loaded(st.students, selectedItem));
   }
 

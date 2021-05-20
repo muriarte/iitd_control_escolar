@@ -23,15 +23,30 @@ class _StudentDetailsState extends State<StudentDetails> {
   //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController ageController = TextEditingController();
+  TextEditingController nombresController = TextEditingController();
+  TextEditingController apellidosController = TextEditingController();
+  TextEditingController nacimientoController = TextEditingController();
+  TextEditingController sexoController = TextEditingController();
+  TextEditingController calleController = TextEditingController();
+  TextEditingController numeroExtController = TextEditingController();
+  TextEditingController numeroIntController = TextEditingController();
+  TextEditingController coloniaController = TextEditingController();
+  TextEditingController municipioController = TextEditingController();
+  TextEditingController estadoController = TextEditingController();
+  TextEditingController paisController = TextEditingController();
+  TextEditingController cpController = TextEditingController();
+  TextEditingController telCelularController = TextEditingController();
+  TextEditingController telcasaController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController fechaInicioController = TextEditingController();
+  TextEditingController observacionesController = TextEditingController();
+  TextEditingController activoController = TextEditingController();
 
   @override
   void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    ageController.dispose();
+    nombresController.dispose();
+    apellidosController.dispose();
+    nacimientoController.dispose();
     super.dispose();
   }
 
@@ -56,13 +71,16 @@ class _StudentDetailsState extends State<StudentDetails> {
     return BlocBuilder<StudentDetailsBloc, StudentDetailsState>(
         //bloc: _cubit,
         builder: (context, studentState) {
+      if (studentState is StudentInitialState) {
+        return Text("No item selected");
+      }
+
       var student = (studentState as StudentLoadedState).student;
-      firstNameController.value =
-          TextEditingValue(text: student?.firstName ?? "");
-      lastNameController.value =
-          TextEditingValue(text: student?.lastName ?? "");
-      ageController.value =
-          TextEditingValue(text: student?.age.toString() ?? "");
+      nombresController.value = TextEditingValue(text: student?.nombres ?? "");
+      apellidosController.value =
+          TextEditingValue(text: student?.apellidos ?? "");
+      nacimientoController.value =
+          TextEditingValue(text: student?.nacimiento.toString() ?? "");
 
       var isEditing = studentState.isEditing;
       var validate = studentState.validate;
@@ -82,11 +100,11 @@ class _StudentDetailsState extends State<StudentDetails> {
                 Text("Id: ${student?.id}"),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'First name',
+                    labelText: 'Nombres',
                     filled: true,
                     isDense: true,
                   ),
-                  controller: firstNameController,
+                  controller: nombresController,
                   keyboardType: TextInputType.name,
                   enabled: isEditing,
                   autocorrect: false,
@@ -95,11 +113,11 @@ class _StudentDetailsState extends State<StudentDetails> {
                 SizedBox(height: 10),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Last name',
+                    labelText: 'Apellidos',
                     filled: true,
                     isDense: true,
                   ),
-                  controller: lastNameController,
+                  controller: apellidosController,
                   keyboardType: TextInputType.name,
                   enabled: isEditing,
                   autocorrect: false,
@@ -108,18 +126,18 @@ class _StudentDetailsState extends State<StudentDetails> {
                 SizedBox(height: 10),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Age',
+                    labelText: 'Nacimiento',
                     filled: true,
                     isDense: true,
                   ),
-                  controller: ageController,
-                  keyboardType: TextInputType.number,
+                  controller: nacimientoController,
+                  keyboardType: TextInputType.datetime,
                   enabled: isEditing,
                   autocorrect: false,
                   validator: (String? value) {
                     if (value == null) return "Cannot be empty";
-                    var age = int.tryParse(value);
-                    if (age == null || age <= 0) return "Invalid age";
+                    var nacimiento = DateTime.tryParse(value);
+                    if (nacimiento == null || nacimiento.year <= 0) return "Invalid birthdate";
                     return null;
                   },
                 ),
@@ -167,12 +185,47 @@ class _StudentDetailsState extends State<StudentDetails> {
     var formState = _formKey.currentState;
     if (formState == null) return;
 
-    var firstName = firstNameController.text;
-    var lastName = lastNameController.text;
-    var age = int.tryParse(ageController.text);
+    var nombres = nombresController.text;
+    var apellidos = apellidosController.text;
+    var nacimiento =
+        DateTime.tryParse(nacimientoController.text) ?? DateTime(2000, 1, 1);
+    var sexo = sexoController.text;
+    var calle = calleController.text;
+    var numeroExt = numeroExtController.text;
+    var numeroInt = numeroIntController.text;
+    var colonia = coloniaController.text;
+    var municipio = municipioController.text;
+    var estado = estadoController.text;
+    var pais = paisController.text;
+    var cp = cpController.text;
+    var telCelular = telCelularController.text;
+    var telCasa = telcasaController.text;
+    var email = emailController.text;
+    var fechaInicio = DateTime.tryParse(fechaInicioController.text) ?? DateTime(2000, 1, 1);
+    var observaciones = observacionesController.text;
+    var activo = activoController.text;
 
     var cub = BlocProvider.of<StudentDetailsBloc>(context);
-    cub.updateItem(firstName, lastName, age ?? 0);
+    cub.updateItem(
+      nombres,
+      apellidos,
+      nacimiento,
+      sexo,
+      calle,
+      numeroExt,
+      numeroInt,
+      colonia,
+      municipio,
+      estado,
+      pais,
+      cp,
+      telCelular,
+      telCasa,
+      email,
+      fechaInicio,
+      observaciones,
+      activo,
+    );
 
     // print('First name: $firstName\r\n');
     // print('Last name: $lastName\r\n');

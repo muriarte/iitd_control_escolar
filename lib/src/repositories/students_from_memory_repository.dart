@@ -5,9 +5,12 @@ import '../domain/students/student_repository.dart';
 
 class StudentsFromMemoryRepository extends StudentRepository {
   final students = [
-    Student(1, "Juan", "Perez", 24),
-    Student(2, "Elena", "Lara", 22),
-    Student(3, "Raul", "Lopez", 42)
+    Student(1, "Juan", "Perez", DateTime(2010, 3, 15), "", "", "", "", "", "",
+        "", "", "", "", "", "", DateTime(2020, 12, 18), "", ""),
+    Student(2, "Elena", "Lara", DateTime(2010, 3, 16), "", "", "", "", "", "",
+        "", "", "", "", "", "", DateTime(2020, 12, 19), "", ""),
+    Student(3, "Raul", "Lopez", DateTime(2010, 3, 17), "", "", "", "", "", "",
+        "", "", "", "", "", "", DateTime(2020, 12, 20), "", "")
   ];
 
   Future<List<Student>> getAll() async {
@@ -17,9 +20,24 @@ class StudentsFromMemoryRepository extends StudentRepository {
   Future<Student> save(Student student) async {
     for (final st in students) {
       if (st.id == student.id) {
-        st.firstName = student.firstName;
-        st.lastName = student.lastName;
-        st.age = student.age;
+        st.nombres = student.nombres;
+        st.apellidos = student.apellidos;
+        st.nacimiento = student.nacimiento;
+        st.sexo = student.sexo;
+        st.calle = student.calle;
+        st.numeroExt = student.numeroExt;
+        st.numeroInt = student.numeroInt;
+        st.colonia = student.colonia;
+        st.municipio = student.municipio;
+        st.estado = student.estado;
+        st.pais = student.pais;
+        st.cp = student.cp;
+        st.telCelular = student.telCelular;
+        st.telCasa = student.telCasa;
+        st.email = student.email;
+        st.fechaInicio = student.fechaInicio;
+        st.observaciones = student.observaciones;
+        st.activo = student.activo;
         return st;
       }
     }
@@ -29,7 +47,27 @@ class StudentsFromMemoryRepository extends StudentRepository {
       return st;
     }
     var maxId = _getMaxId();
-    var st = Student(maxId, student.firstName, student.lastName, student.age);
+    var st = Student(
+      maxId,
+      student.nombres,
+      student.apellidos,
+      student.nacimiento,
+      student.sexo,
+      student.calle,
+      student.numeroExt,
+      student.numeroInt,
+      student.colonia,
+      student.municipio,
+      student.estado,
+      student.pais,
+      student.cp,
+      student.telCelular,
+      student.telCasa,
+      student.email,
+      student.fechaInicio,
+      student.observaciones,
+      student.activo,
+    );
     students.add(st);
     return st;
   }

@@ -18,11 +18,11 @@ class MyApp extends StatelessWidget {
     return BlocProvider<StudentListingBloc>(
       create: (context) => myCubit,
       child: MaterialApp(
-        title: 'Sistema de gestión de estudiantes',
+        title: 'iitd Gestión de estudiantes',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: MyHomePage(title: 'Pagina principal'),
+        home: MyHomePage(title: 'iitd gestión de estudiantes'),
       ),
     );
   }
