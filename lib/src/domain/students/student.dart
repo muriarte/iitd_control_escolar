@@ -140,7 +140,7 @@ class Student {
         'id': id,
         'nombres': nombres,
         'apellidos': apellidos,
-        'nacimiento': nacimiento.toIso8601String(),
+        'nacimiento': nacimiento.toIso8601String().substring(0, 19) + "Z",
         'sexo': sexo,
         'calle': calle,
         'numeroExt': numeroExt,
@@ -153,9 +153,9 @@ class Student {
         'telCelular': telCelular,
         'telCasa': telCasa,
         'email': email,
-        'fechaInicio': fechaInicio.toIso8601String(),
+        'fechaInicio':
+            fechaInicio.toIso8601String().substring(0, 19) + "Z",
         'observaciones': observaciones,
         'activo': activo,
       };
-      
 }

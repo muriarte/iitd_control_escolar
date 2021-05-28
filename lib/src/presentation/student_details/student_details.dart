@@ -1,10 +1,13 @@
 //import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iitd_control_escolar/src/presentation/validators.dart';
 import 'package:iitd_control_escolar/src/presentation/student_details/student_details_bloc.dart';
 import 'package:iitd_control_escolar/src/presentation/student_listing/student_listing_bloc.dart';
 import 'package:iitd_control_escolar/src/presentation/student_details/student_details_state.dart';
 import 'package:iitd_control_escolar/src/domain/students/student.dart';
+
+//typedef TxtEditVal = TextEditingValue;
 
 class StudentDetails extends StatefulWidget {
   StudentDetails({
@@ -23,24 +26,24 @@ class _StudentDetailsState extends State<StudentDetails> {
   //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  TextEditingController nombresController = TextEditingController();
-  TextEditingController apellidosController = TextEditingController();
-  TextEditingController nacimientoController = TextEditingController();
-  TextEditingController sexoController = TextEditingController();
-  TextEditingController calleController = TextEditingController();
-  TextEditingController numeroExtController = TextEditingController();
-  TextEditingController numeroIntController = TextEditingController();
-  TextEditingController coloniaController = TextEditingController();
-  TextEditingController municipioController = TextEditingController();
-  TextEditingController estadoController = TextEditingController();
-  TextEditingController paisController = TextEditingController();
-  TextEditingController cpController = TextEditingController();
-  TextEditingController telCelularController = TextEditingController();
-  TextEditingController telcasaController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController fechaInicioController = TextEditingController();
-  TextEditingController observacionesController = TextEditingController();
-  TextEditingController activoController = TextEditingController();
+  var nombresController = TextEditingController();
+  var apellidosController = TextEditingController();
+  var nacimientoController = TextEditingController();
+  var sexoController = TextEditingController();
+  var calleController = TextEditingController();
+  var numeroExtController = TextEditingController();
+  var numeroIntController = TextEditingController();
+  var coloniaController = TextEditingController();
+  var municipioController = TextEditingController();
+  var estadoController = TextEditingController();
+  var paisController = TextEditingController();
+  var cpController = TextEditingController();
+  var telCelularController = TextEditingController();
+  var telCasaController = TextEditingController();
+  var emailController = TextEditingController();
+  var fechaInicioController = TextEditingController();
+  var observacionesController = TextEditingController();
+  var activoController = TextEditingController();
 
   @override
   void dispose() {
@@ -81,6 +84,27 @@ class _StudentDetailsState extends State<StudentDetails> {
           TextEditingValue(text: student?.apellidos ?? "");
       nacimientoController.value =
           TextEditingValue(text: student?.nacimiento.toString() ?? "");
+      sexoController.value = TextEditingValue(text: student?.sexo ?? "");
+      calleController.value = TextEditingValue(text: student?.calle ?? "");
+      numeroExtController.value =
+          TextEditingValue(text: student?.numeroExt ?? "");
+      numeroIntController.value =
+          TextEditingValue(text: student?.numeroInt ?? "");
+      coloniaController.value = TextEditingValue(text: student?.colonia ?? "");
+      municipioController.value =
+          TextEditingValue(text: student?.municipio ?? "");
+      estadoController.value = TextEditingValue(text: student?.estado ?? "");
+      paisController.value = TextEditingValue(text: student?.pais ?? "");
+      cpController.value = TextEditingValue(text: student?.cp ?? "");
+      telCelularController.value =
+          TextEditingValue(text: student?.telCelular ?? "");
+      telCasaController.value = TextEditingValue(text: student?.telCasa ?? "");
+      emailController.value = TextEditingValue(text: student?.email ?? "");
+      fechaInicioController.value =
+          TextEditingValue(text: student?.fechaInicio.toString() ?? "");
+      observacionesController.value =
+          TextEditingValue(text: student?.observaciones ?? "");
+      activoController.value = TextEditingValue(text: student?.activo ?? "N");
 
       var isEditing = studentState.isEditing;
       var validate = studentState.validate;
@@ -88,6 +112,7 @@ class _StudentDetailsState extends State<StudentDetails> {
       //     name: "StudentDetails");
 
       return SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
         child: Stack(children: [
           Form(
             key: _formKey,
@@ -98,48 +123,183 @@ class _StudentDetailsState extends State<StudentDetails> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text("Id: ${student?.id}"),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Nombres',
-                    filled: true,
-                    isDense: true,
-                  ),
-                  controller: nombresController,
-                  keyboardType: TextInputType.name,
-                  enabled: isEditing,
-                  autocorrect: false,
-                  validator: _notEmptyValidator,
+                buildTextFormField(
+                  label: 'Nombres',
+                  isEditing: isEditing,
+                  textController: nombresController,
+                  inputType: TextInputType.name,
+                  validator: Validators.notEmpty,
                 ),
                 SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Apellidos',
-                    filled: true,
-                    isDense: true,
-                  ),
-                  controller: apellidosController,
-                  keyboardType: TextInputType.name,
-                  enabled: isEditing,
-                  autocorrect: false,
-                  validator: _notEmptyValidator,
+                buildTextFormField(
+                  label: 'Apellidos',
+                  isEditing: isEditing,
+                  textController: apellidosController,
+                  inputType: TextInputType.name,
+                  validator: Validators.notEmpty,
                 ),
                 SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Nacimiento',
-                    filled: true,
-                    isDense: true,
-                  ),
-                  controller: nacimientoController,
-                  keyboardType: TextInputType.datetime,
-                  enabled: isEditing,
-                  autocorrect: false,
-                  validator: (String? value) {
-                    if (value == null) return "Cannot be empty";
-                    var nacimiento = DateTime.tryParse(value);
-                    if (nacimiento == null || nacimiento.year <= 0) return "Invalid birthdate";
-                    return null;
-                  },
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Nacimiento",
+                        isEditing: isEditing,
+                        textController: nacimientoController,
+                        inputType: TextInputType.datetime,
+                        validator: Validators.date,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    SizedBox(
+                      width: 60,
+                      child: buildTextFormField(
+                        label: "Sexo",
+                        isEditing: isEditing,
+                        textController: sexoController,
+                        validator: Validators.mf,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Calle",
+                        isEditing: isEditing,
+                        textController: calleController,
+                        inputType: TextInputType.name,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    SizedBox(
+                      width: 120,
+                      child: buildTextFormField(
+                        label: "Numero Ext.",
+                        isEditing: isEditing,
+                        textController: numeroExtController,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    SizedBox(
+                      width: 120,
+                      child: buildTextFormField(
+                        label: "Numero Int",
+                        isEditing: isEditing,
+                        textController: numeroIntController,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Colonia",
+                        isEditing: isEditing,
+                        textController: coloniaController,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Municipio",
+                        isEditing: isEditing,
+                        textController: municipioController,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Estado",
+                        isEditing: isEditing,
+                        textController: estadoController,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Pais",
+                        isEditing: isEditing,
+                        textController: paisController,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    SizedBox(
+                      width: 90,
+                      child: buildTextFormField(
+                        label: "C.P.",
+                        isEditing: isEditing,
+                        textController: cpController,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Tel. Celular",
+                        isEditing: isEditing,
+                        textController: telCelularController,
+                        inputType: TextInputType.phone,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Tel. casa",
+                        isEditing: isEditing,
+                        textController: telCasaController,
+                        inputType: TextInputType.phone,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "EMail",
+                        isEditing: isEditing,
+                        textController: emailController,
+                        inputType: TextInputType.emailAddress,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: buildTextFormField(
+                        label: "Fecha inicio",
+                        isEditing: isEditing,
+                        textController: fechaInicioController,
+                        inputType: TextInputType.datetime,
+                        validator: Validators.date,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                buildTextFormField(
+                  label: "Observaciones",
+                  isEditing: isEditing,
+                  textController: observacionesController,
+                  inputType: TextInputType.multiline,
+                ),
+                SizedBox(height: 10),
+                buildTextFormField(
+                  label: "Activo",
+                  isEditing: isEditing,
+                  textController: activoController,
+                  validator: Validators.sn,
                 ),
               ],
             ),
@@ -173,11 +333,26 @@ class _StudentDetailsState extends State<StudentDetails> {
     });
   }
 
-  String? _notEmptyValidator(String? value) {
-    if (value == null) return "Cannot be empty";
-    if (value.trim().length == 0) return "Cannot be empty";
-
-    return null;
+  TextFormField buildTextFormField(
+      {String label = '',
+      required bool isEditing,
+      required TextEditingController textController,
+      TextInputType inputType = TextInputType.text,
+      String? Function(String?)? validator}) {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        isDense: true,
+      ),
+      controller: textController,
+      keyboardType: inputType,
+      enabled: isEditing,
+      autocorrect: false,
+      validator: validator,
+      maxLines: inputType == TextInputType.multiline ? 5 : 1,
+      minLines: inputType == TextInputType.multiline ? 2 : null,
+    );
   }
 
   void _validateFormAndProcess() {
@@ -199,9 +374,10 @@ class _StudentDetailsState extends State<StudentDetails> {
     var pais = paisController.text;
     var cp = cpController.text;
     var telCelular = telCelularController.text;
-    var telCasa = telcasaController.text;
+    var telCasa = telCasaController.text;
     var email = emailController.text;
-    var fechaInicio = DateTime.tryParse(fechaInicioController.text) ?? DateTime(2000, 1, 1);
+    var fechaInicio =
+        DateTime.tryParse(fechaInicioController.text) ?? DateTime(2000, 1, 1);
     var observaciones = observacionesController.text;
     var activo = activoController.text;
 

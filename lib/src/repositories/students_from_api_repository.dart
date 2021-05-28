@@ -23,11 +23,11 @@ class StudentsFromApiRepository extends StudentRepository {
       final response = await http.get(Uri.parse('$url'));
       checkResponseAndThrowExceptionIfSomethingWentWrong(response);
 
-      developer.log("Returning student list", name:"students_from_api_repository");
+      developer.log("Returning student list",
+          name: "students_from_api_repository");
 
       return allStudentsFromJson(response.body);
     } on IOException {
-
       developer.log("IOException detected, throwing NetworkException",
           name: "students_from_api_repository");
 
@@ -47,12 +47,13 @@ class StudentsFromApiRepository extends StudentRepository {
 
   Future<Student> save(Student student) async {
     try {
-      final response = await http.post(Uri.parse('$url'),
-          body: jsonEncode(student.toJson()),
-          headers: {
-            HttpHeaders.acceptHeader: 'application/json',
-            HttpHeaders.contentTypeHeader: 'application/json'
-          });
+      //developer.debugger();
+      final body = jsonEncode(student.toJson());
+      final response = await http.post(Uri.parse('$url'), body: body, headers: {
+        HttpHeaders.acceptHeader: 'application/json',
+        HttpHeaders.contentTypeHeader: 'application/json'
+      });
+      //developer.debugger();
       checkResponseAndThrowExceptionIfSomethingWentWrong(response);
       return studentFromJson(response.body);
     } on IOException {

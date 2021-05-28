@@ -44,7 +44,9 @@ class StudentListingBloc extends Cubit<StudentListingState> {
   /// Actualiza los datos del estudiante
   Future<void> updateItem(Student student) async {
     final st = state as StudentListingLoadedState;
+    developer.log("updateItem before",name:"student_listing_bloc");
     var studentSaved = await studentsRepo.save(student);
+    developer.log("updateItem after",name:"student_listing_bloc");
     emit(StudentListingLoadedState.withDifferentiator(
         st.students, studentSaved, st.differentiator + 1));
   }
