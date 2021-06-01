@@ -1,5 +1,6 @@
 //import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iitd_control_escolar/src/presentation/validators.dart';
 import 'package:iitd_control_escolar/src/presentation/student_details/student_details_bloc.dart';
@@ -129,6 +130,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                   textController: nombresController,
                   inputType: TextInputType.name,
                   validator: Validators.notEmpty,
+                  maxLength: 100,
                 ),
                 SizedBox(height: 10),
                 buildTextFormField(
@@ -137,6 +139,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                   textController: apellidosController,
                   inputType: TextInputType.name,
                   validator: Validators.notEmpty,
+                  maxLength: 100,
                 ),
                 SizedBox(height: 10),
                 Row(
@@ -148,6 +151,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         textController: nacimientoController,
                         inputType: TextInputType.datetime,
                         validator: Validators.date,
+                        maxLength: 30,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -158,6 +162,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         isEditing: isEditing,
                         textController: sexoController,
                         validator: Validators.mf,
+                        maxLength: 1,
                       ),
                     ),
                   ],
@@ -171,6 +176,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         isEditing: isEditing,
                         textController: calleController,
                         inputType: TextInputType.name,
+                        maxLength: 100,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -180,6 +186,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         label: "Numero Ext.",
                         isEditing: isEditing,
                         textController: numeroExtController,
+                        maxLength: 50,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -189,6 +196,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         label: "Numero Int",
                         isEditing: isEditing,
                         textController: numeroIntController,
+                        maxLength: 50,
                       ),
                     ),
                   ],
@@ -201,6 +209,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         label: "Colonia",
                         isEditing: isEditing,
                         textController: coloniaController,
+                        maxLength: 50,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -209,6 +218,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         label: "Municipio",
                         isEditing: isEditing,
                         textController: municipioController,
+                        maxLength: 50,
                       ),
                     ),
                   ],
@@ -221,6 +231,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         label: "Estado",
                         isEditing: isEditing,
                         textController: estadoController,
+                        maxLength: 50,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -229,6 +240,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         label: "Pais",
                         isEditing: isEditing,
                         textController: paisController,
+                        maxLength: 50,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -238,6 +250,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         label: "C.P.",
                         isEditing: isEditing,
                         textController: cpController,
+                        maxLength: 6,
                       ),
                     ),
                   ],
@@ -251,6 +264,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         isEditing: isEditing,
                         textController: telCelularController,
                         inputType: TextInputType.phone,
+                        maxLength: 50,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -260,6 +274,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         isEditing: isEditing,
                         textController: telCasaController,
                         inputType: TextInputType.phone,
+                        maxLength: 50,
                       ),
                     ),
                   ],
@@ -273,6 +288,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         isEditing: isEditing,
                         textController: emailController,
                         inputType: TextInputType.emailAddress,
+                        maxLength: 255,
                       ),
                     ),
                     SizedBox(width: 10),
@@ -283,6 +299,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                         textController: fechaInicioController,
                         inputType: TextInputType.datetime,
                         validator: Validators.date,
+                        maxLength: 30,
                       ),
                     ),
                   ],
@@ -300,6 +317,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                   isEditing: isEditing,
                   textController: activoController,
                   validator: Validators.sn,
+                        maxLength: 1,
                 ),
               ],
             ),
@@ -336,6 +354,7 @@ class _StudentDetailsState extends State<StudentDetails> {
   TextFormField buildTextFormField(
       {String label = '',
       required bool isEditing,
+      int? maxLength,
       required TextEditingController textController,
       TextInputType inputType = TextInputType.text,
       String? Function(String?)? validator}) {
@@ -352,6 +371,8 @@ class _StudentDetailsState extends State<StudentDetails> {
       validator: validator,
       maxLines: inputType == TextInputType.multiline ? 5 : 1,
       minLines: inputType == TextInputType.multiline ? 2 : null,
+      maxLength: maxLength,
+      maxLengthEnforcement: MaxLengthEnforcement.enforced,
     );
   }
 
