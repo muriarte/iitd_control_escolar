@@ -304,19 +304,7 @@ class _StudentDetailsState extends State<StudentDetails> {
               ],
             ),
           ),
-          if (!isEditing)
-            // Desplegamos el botón de Edit
-            Positioned(
-              right: 10,
-              bottom: 5,
-              child: FloatingActionButton(
-                child: const Icon(Icons.edit),
-                onPressed: () {
-                  BlocProvider.of<StudentDetailsBloc>(context).setEditing(true);
-                },
-              ),
-            )
-          else
+          if (isEditing)
             // Desplegamos el botón de Save
             Positioned(
               right: 10,
@@ -325,6 +313,18 @@ class _StudentDetailsState extends State<StudentDetails> {
                 child: const Icon(Icons.save),
                 onPressed: () {
                   _validateFormAndProcess();
+                },
+              ),
+            )
+          else
+            // Desplegamos el botón de Edit
+            Positioned(
+              right: 10,
+              bottom: 5,
+              child: FloatingActionButton(
+                child: const Icon(Icons.edit),
+                onPressed: () {
+                  BlocProvider.of<StudentDetailsBloc>(context).setEditing(true);
                 },
               ),
             ),
