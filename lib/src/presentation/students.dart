@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iitd_control_escolar/src/domain/students/student.dart';
 import 'package:iitd_control_escolar/src/presentation/student_details/student_details_bloc.dart';
 import 'package:iitd_control_escolar/src/presentation/student_listing/student_listing_state.dart';
 import 'package:iitd_control_escolar/src/presentation/student_listing/student_listing_bloc.dart';
@@ -45,6 +46,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 content: Text("Something went wrong:" + state.message),
               ),
             );
+          } else if (state is StudentListingLoadedState) {
+            if (state.askDeleteConfirmation) {
+              var bloc = BlocProvider.of<StudentListingBloc>(context);
+              _showConfirmationDialog(state.selectedStudent, bloc);
+            }
           }
         },
         builder: (context, state) {
@@ -187,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //   return studentCubit;
           // },
           child: Flexible(
-            flex: 3,
+            flex: 2,
             child: StudentDetails(
               isInTabletLayout: true,
               item: (cubit.state as StudentListingLoadedState)
@@ -225,6 +231,43 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Text("+"),
         ),
       ],
+    );
+  }
+
+  Future<void> _showConfirmationDialog(Student? student, StudentListingBloc bloc) async {
+    if (student == null) return;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirme eliminación de estudiante'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Text('Por favor confirme si desea eliminar al estudiante'),
+                Text('${student.id} - ${student.nombres} ${student.apellidos}'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Confirmar'),
+              onPressed: () {
+                print('Confirmed');
+                bloc.deleteItem(student.id);
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

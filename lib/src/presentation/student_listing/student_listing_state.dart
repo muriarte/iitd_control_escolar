@@ -29,6 +29,7 @@ class StudentListingLoadingState extends StudentListingState {
 class StudentListingLoadedState extends StudentListingState {
   final List<Student> students;
   final Student? selectedStudent;
+  final bool askDeleteConfirmation;
 
   /// Para forzar la detección de un cambio de state en el BLoC
   ///  ya que el operador == no detecta cambios en los elementos de students
@@ -43,23 +44,43 @@ class StudentListingLoadedState extends StudentListingState {
   StudentListingLoadedState(List<Student> students, Student? selectedStudent)
       : students = students,
         selectedStudent = selectedStudent,
-        differentiator = 0;
+        differentiator = 0,
+        askDeleteConfirmation = false;
 
   // Construye un StudenLoadedState que incluye un diferenciador especifico
   StudentListingLoadedState.withDifferentiator(
       List<Student> students, Student? selectedStudent, int differentiator)
       : students = students,
         selectedStudent = selectedStudent,
-        differentiator = (differentiator >= 999999999 ? 0 : differentiator);
+        differentiator = (differentiator >= 999999999 ? 0 : differentiator),
+        askDeleteConfirmation = false;
+
+  // Construye un StudenLoadedState que incluye un diferenciador especifico y askDeleteConfirmation=true
+  StudentListingLoadedState.withDeleteConfirmation(
+      List<Student> students, Student? selectedStudent, int differentiator)
+      : students = students,
+        selectedStudent = selectedStudent,
+        differentiator = (differentiator >= 999999999 ? 0 : differentiator),
+        askDeleteConfirmation = true;
 
   @override
-  List<Object> get props =>
-      [students, selectedStudent ?? "null", differentiator];
+  List<Object> get props => [
+        students,
+        selectedStudent ?? "null",
+        differentiator,
+        askDeleteConfirmation
+      ];
 
   // Construye una version diferenciada (para propositos del operador ==) del StudentsLoadedState
   factory StudentListingLoadedState.differentiated(
       StudentListingLoadedState original) {
     return StudentListingLoadedState.withDifferentiator(original.students,
+        original.selectedStudent, original.differentiator + 1);
+  }
+
+  factory StudentListingLoadedState.differentiatedAndWithDeleteConfirmation(
+      StudentListingLoadedState original) {
+    return StudentListingLoadedState.withDeleteConfirmation(original.students,
         original.selectedStudent, original.differentiator + 1);
   }
 }

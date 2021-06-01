@@ -44,9 +44,7 @@ class StudentListingBloc extends Cubit<StudentListingState> {
   /// Actualiza los datos del estudiante
   Future<void> updateItem(Student student) async {
     final st = state as StudentListingLoadedState;
-    developer.log("updateItem before", name: "student_listing_bloc");
     var studentSaved = await studentsRepo.save(student);
-    developer.log("updateItem after", name: "student_listing_bloc");
     var idx =
         st.students.indexWhere((element) => element.id == studentSaved.id);
     if (idx >= 0) {
@@ -54,5 +52,40 @@ class StudentListingBloc extends Cubit<StudentListingState> {
     }
     emit(StudentListingLoadedState.withDifferentiator(
         st.students, studentSaved, st.differentiator + 1));
+  }
+
+  /// Solicita confirmacion para eliminar estudiante
+  Future<void> deleteItemIfConfirmed(int id) async {
+    final st = state as StudentListingLoadedState;
+    var idx = st.students.indexWhere((element) => element.id == id);
+    if (idx < 0) {
+      emit(StudentListingLoadedState.differentiated(st));
+      return;
+    }
+    emit(StudentListingLoadedState.withDeleteConfirmation(st.students, st.students[idx], st.differentiator + 1));
+  }
+
+  /// Elimina estudiante
+  Future<void> deleteItem(int id) async {
+    final st = state as StudentListingLoadedState;
+    var idx = st.students.indexWhere((element) => element.id == id);
+    if (idx < 0) {
+      emit(StudentListingLoadedState.differentiated(st));
+      return;
+    }
+
+    Student? selected;
+    var result = await studentsRepo.delete(st.students[idx].id);
+    if (result) {
+      st.students.removeAt(idx);
+
+      if (st.students.length > idx) {
+        selected = st.students[idx];
+      } else if (idx > 0) {
+        selected = st.students[idx - 1];
+      }
+    }
+    emit(StudentListingLoadedState.withDifferentiator(
+        st.students, selected, st.differentiator + 1));
   }
 }

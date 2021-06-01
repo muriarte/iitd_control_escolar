@@ -22,7 +22,18 @@ class StudentListing extends StatelessWidget {
     return ListView(
       children: items.map((item) {
         return ListTile(
-          title: Text(item.nombres),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(item.nombres),
+              TextButton(
+                child: const Icon(Icons.delete),
+                onPressed: () {
+                  _cubit.deleteItemIfConfirmed(item.id);
+                },
+              ),
+            ],
+          ),
           onTap: () => itemSelectedCallback(item),
           selected: selectedItem == item,
         );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iitd_control_escolar/src/presentation/home_page.dart';
+import 'package:iitd_control_escolar/src/presentation/students.dart';
 import 'package:iitd_control_escolar/src/presentation/student_listing/student_listing_bloc.dart';
 import 'package:iitd_control_escolar/di_container.dart';
 

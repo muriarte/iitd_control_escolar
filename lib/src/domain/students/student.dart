@@ -1,6 +1,6 @@
 import "dart:convert";
 
-import 'dart:developer';
+import 'dart:developer' as developer;
 
 Student studentFromJson(String str) {
   final jsonData = json.decode(str);
@@ -90,6 +90,7 @@ class Student {
   /// Crea un nuevo estudiante inicializando sus propiedades con los valores de otro estudiante
   Student.byObject(Student obj) {
     copyProps(obj);
+    developer.log("Student.ByObject", name: "domain/students/student.dart");
   }
 
   /// Copia todas las propiedades del objeto proporcionado en este objeto
@@ -153,8 +154,7 @@ class Student {
         'telCelular': telCelular,
         'telCasa': telCasa,
         'email': email,
-        'fechaInicio':
-            fechaInicio.toIso8601String().substring(0, 19) + "Z",
+        'fechaInicio': fechaInicio.toIso8601String().substring(0, 19) + "Z",
         'observaciones': observaciones,
         'activo': activo,
       };

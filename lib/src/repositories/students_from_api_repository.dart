@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:iitd_control_escolar/src/repositories/common.dart';
 //import '../services/api_services/school_api_provider.dart';
 import '../domain/students/student.dart';
+import '../domain/students/status.dart';
 import '../domain/students/student_repository.dart';
 import 'network_exception.dart';
 
@@ -67,7 +68,8 @@ class StudentsFromApiRepository extends StudentRepository {
         HttpHeaders.acceptHeader: 'application/json',
       });
       checkResponseAndThrowExceptionIfSomethingWentWrong(response);
-      return true;
+      final status = statusFromJson(response.body);
+      return status.status;
     } on IOException {
       throw NetworkException();
     }
