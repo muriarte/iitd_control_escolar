@@ -19,25 +19,109 @@ class StudentListing extends StatelessWidget {
     if (_cubit.state is StudentListingInitialState) _cubit.getStudentList();
     if (_cubit.state is! StudentListingLoadedState) return Container();
     List<Student> items = (_cubit.state as StudentListingLoadedState).students;
-    return ListView(
-      children: items.map((item) {
-        return ListTile(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      children: <Widget>[
+        ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            _cubit.setShowFilters(!isExpanded);
+          },
+          children: [
+            ExpansionPanel(
+              headerBuilder: (BuildContext context, bool isExpanded) {
+                return ListTile(
+                  title: Text("Filtros"),
+                );
+              },
+              body: filtersForm(_cubit),
+              isExpanded:
+                  (_cubit.state as StudentListingLoadedState).showFilters,
+            ),
+          ],
+        ),
+        studentListing(items, _cubit),
+      ],
+    );
+  }
+
+  Widget filtersForm(StudentListingBloc _cubit) {
+    var nombreController = TextEditingController();
+    nombreController.value = TextEditingValue(
+        text: (_cubit.state as StudentListingLoadedState).nameFilter);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Row(
             children: [
-              Text(item.nombres),
-              TextButton(
-                child: const Icon(Icons.delete),
-                onPressed: () {
-                  _cubit.deleteItemIfConfirmed(item.id);
-                },
+              Text("Nombre:"),
+              Expanded(
+                child: TextField(
+                  controller: nombreController,
+                  onEditingComplete: () => {
+                    _cubit.setFilters(
+                        nombreController.text,
+                        (_cubit.state as StudentListingLoadedState)
+                            .activesFilter)
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 70,
+                child: TextButton(
+                  child: Text('Filtrar'),
+                  onPressed: () => {
+                    _cubit.setFilters(
+                        nombreController.text,
+                        (_cubit.state as StudentListingLoadedState)
+                            .activesFilter)
+                  },
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Text("Solo activos:"),
+              Checkbox(
+                onChanged: (value) =>
+                    {_cubit.setFilters(nombreController.text, value ?? false)},
+                value:
+                    (_cubit.state as StudentListingLoadedState).activesFilter,
               ),
             ],
           ),
-          onTap: () => itemSelectedCallback(item),
-          selected: selectedItem == item,
-        );
-      }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Expanded studentListing(List<Student> items, StudentListingBloc _cubit) {
+    var st = _cubit.state as StudentListingLoadedState;
+    var itemsFiltrados = items.where((e) =>
+        ((st.nameFilter.trim().length == 0 ||
+            e.nombres.toLowerCase().contains(st.nameFilter.toLowerCase()) ||
+            e.apellidos.toLowerCase().contains(st.nameFilter.toLowerCase()))) &&
+        (st.activesFilter == false || e.activo == "S"));
+    return Expanded(
+      child: ListView(
+        children: itemsFiltrados.map((item) {
+          return ListTile(
+            title: Text(item.nombres),
+            trailing: TextButton(
+              child: const Icon(Icons.delete),
+              onPressed: () {
+                _cubit.deleteItemIfConfirmed(item.id);
+              },
+            ),
+            onTap: () => itemSelectedCallback(item),
+            selected: selectedItem == item,
+          );
+        }).toList(),
+      ),
     );
   }
 }

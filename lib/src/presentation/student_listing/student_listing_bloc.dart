@@ -38,7 +38,36 @@ class StudentListingBloc extends Cubit<StudentListingState> {
     developer.log("setSelectedState emitting loadedState",
         name: "students_listing_bloc");
 
-    emit(StudentListingState.loaded(st.students, selectedItem));
+    emit(StudentListingLoadedState.withDifferentiator(
+        st.students,
+        selectedItem,
+        st.differentiator + 1,
+        st.showFilters,
+        st.nameFilter,
+        st.activesFilter));
+  }
+
+  /// Establece el item seleccionado de la lista de estudiantes
+  Future<void> setShowFilters(bool showFilter) async {
+    final st = state as StudentListingLoadedState;
+
+    developer.log("setShowFilter emitting loadedState",
+        name: "students_listing_bloc");
+
+    emit(StudentListingLoadedState.differentiatedAndWithShowFilter(
+        st, showFilter));
+  }
+
+  /// Establece el item seleccionado de la lista de estudiantes
+  Future<void> setFilters(String nameFilter, bool activesFilter) async {
+    final st = state as StudentListingLoadedState;
+
+    developer.log(
+        "setFilters emitting loadedState [$nameFilter][$activesFilter]",
+        name: "students_listing_bloc");
+
+    emit(StudentListingLoadedState.differentiatedAndWithFilters(
+        st, nameFilter, activesFilter));
   }
 
   /// Actualiza los datos del estudiante
@@ -51,7 +80,12 @@ class StudentListingBloc extends Cubit<StudentListingState> {
       st.students[idx] = studentSaved;
     }
     emit(StudentListingLoadedState.withDifferentiator(
-        st.students, studentSaved, st.differentiator + 1));
+        st.students,
+        studentSaved,
+        st.differentiator + 1,
+        st.showFilters,
+        st.nameFilter,
+        st.activesFilter));
   }
 
   /// Solicita confirmacion para eliminar estudiante
@@ -62,7 +96,13 @@ class StudentListingBloc extends Cubit<StudentListingState> {
       emit(StudentListingLoadedState.differentiated(st));
       return;
     }
-    emit(StudentListingLoadedState.withDeleteConfirmation(st.students, st.students[idx], st.differentiator + 1));
+    emit(StudentListingLoadedState.withDeleteConfirmation(
+        st.students,
+        st.students[idx],
+        st.differentiator + 1,
+        st.showFilters,
+        st.nameFilter,
+        st.activesFilter));
   }
 
   /// Elimina estudiante
@@ -86,6 +126,11 @@ class StudentListingBloc extends Cubit<StudentListingState> {
       }
     }
     emit(StudentListingLoadedState.withDifferentiator(
-        st.students, selected, st.differentiator + 1));
+        st.students,
+        selected,
+        st.differentiator + 1,
+        st.showFilters,
+        st.nameFilter,
+        st.activesFilter));
   }
 }
