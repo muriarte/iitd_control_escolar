@@ -21,24 +21,27 @@ class StudentListing extends StatelessWidget {
     List<Student> items = (_cubit.state as StudentListingLoadedState).students;
     return Column(
       children: <Widget>[
-        ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            _cubit.setShowFilters(!isExpanded);
-          },
-          children: [
-            ExpansionPanel(
-              headerBuilder: (BuildContext context, bool isExpanded) {
-                return ListTile(
-                  title: Text("Filtros"),
-                );
-              },
-              body: filtersForm(_cubit),
-              isExpanded:
-                  (_cubit.state as StudentListingLoadedState).showFilters,
-            ),
-          ],
-        ),
+        buildFiltersPanel(_cubit),
         studentListing(items, _cubit),
+      ],
+    );
+  }
+
+  ExpansionPanelList buildFiltersPanel(StudentListingBloc _cubit) {
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        _cubit.setShowFilters(!isExpanded);
+      },
+      children: [
+        ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text("Filtros"),
+            );
+          },
+          body: filtersForm(_cubit),
+          isExpanded: (_cubit.state as StudentListingLoadedState).showFilters,
+        ),
       ],
     );
   }
@@ -99,7 +102,7 @@ class StudentListing extends StatelessWidget {
     );
   }
 
-  Expanded studentListing(List<Student> items, StudentListingBloc _cubit) {
+  Widget studentListing(List<Student> items, StudentListingBloc _cubit) {
     var st = _cubit.state as StudentListingLoadedState;
     var itemsFiltrados = items.where((e) =>
         ((st.nameFilter.trim().length == 0 ||
@@ -107,20 +110,32 @@ class StudentListing extends StatelessWidget {
             e.apellidos.toLowerCase().contains(st.nameFilter.toLowerCase()))) &&
         (st.activesFilter == false || e.activo == "S"));
     return Expanded(
-      child: ListView(
-        children: itemsFiltrados.map((item) {
-          return ListTile(
-            title: Text(item.nombres),
-            trailing: TextButton(
-              child: const Icon(Icons.delete),
-              onPressed: () {
-                _cubit.deleteItemIfConfirmed(item.id);
-              },
+      child: Stack(
+        children: [
+          ListView(
+            children: itemsFiltrados.map((item) {
+              return ListTile(
+                title: Text(item.apellidos + ", " + item.nombres),
+                trailing: TextButton(
+                  child: const Icon(Icons.delete),
+                  onPressed: () {
+                    _cubit.deleteItemIfConfirmed(item.id);
+                  },
+                ),
+                onTap: () => itemSelectedCallback(item),
+                selected: selectedItem == item,
+              );
+            }).toList(),
+          ),
+          Positioned(
+            right: 30,
+            bottom: 15,
+            child: FloatingActionButton(
+              onPressed: () => {_cubit.newItem()},
+              child: const Icon(Icons.add_outlined),
             ),
-            onTap: () => itemSelectedCallback(item),
-            selected: selectedItem == item,
-          );
-        }).toList(),
+          ),
+        ],
       ),
     );
   }

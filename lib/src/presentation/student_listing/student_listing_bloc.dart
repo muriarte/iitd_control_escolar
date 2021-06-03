@@ -17,6 +17,9 @@ class StudentListingBloc extends Cubit<StudentListingState> {
 
       try {
         List<Student> items = await studentsRepo.getAll();
+        items.sort((a, b) => (a.apellidos + " " + a.nombres)
+            .toLowerCase()
+            .compareTo((b.apellidos + " " + b.nombres).toLowerCase()));
 
         developer.log("${items.length} students returned",
             name: "students_listing_bloc");
@@ -70,14 +73,35 @@ class StudentListingBloc extends Cubit<StudentListingState> {
         st, nameFilter, activesFilter));
   }
 
+  /// Nuevo estudiante
+  Future<void> newItem() async {
+    final st = state as StudentListingLoadedState;
+    var student = Student.newEmpty();
+    emit(StudentListingLoadedState.withDifferentiator(
+        st.students,
+        student,
+        st.differentiator + 1,
+        st.showFilters,
+        st.nameFilter,
+        st.activesFilter));
+  }
+
   /// Actualiza los datos del estudiante
   Future<void> updateItem(Student student) async {
+    final isNew = student.id == 0;
     final st = state as StudentListingLoadedState;
     var studentSaved = await studentsRepo.save(student);
+
     var idx =
         st.students.indexWhere((element) => element.id == studentSaved.id);
     if (idx >= 0) {
       st.students[idx] = studentSaved;
+    } else if (isNew) {
+      st.students.add(studentSaved);
+      // Hemos desordenado la lista al insertar un elemento al final, la ordenamos de nuevo
+      st.students.sort((a, b) => (a.apellidos + " " + a.nombres)
+          .toLowerCase()
+          .compareTo((b.apellidos + " " + b.nombres).toLowerCase()));
     }
     emit(StudentListingLoadedState.withDifferentiator(
         st.students,

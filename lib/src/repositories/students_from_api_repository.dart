@@ -27,7 +27,7 @@ class StudentsFromApiRepository extends StudentRepository {
       developer.log("Returning student list",
           name: "students_from_api_repository");
 
-      return allStudentsFromJson(response.body);
+      return allStudentsFromJson(Utf8Decoder().convert(response.body.codeUnits));
     } on IOException {
       developer.log("IOException detected, throwing NetworkException",
           name: "students_from_api_repository");
@@ -40,7 +40,7 @@ class StudentsFromApiRepository extends StudentRepository {
     try {
       final response = await http.get(Uri.parse('$url/$id'));
       checkResponseAndThrowExceptionIfSomethingWentWrong(response);
-      return studentFromJson(response.body);
+      return studentFromJson(Utf8Decoder().convert(response.body.codeUnits));
     } on IOException {
       throw NetworkException();
     }
@@ -56,7 +56,13 @@ class StudentsFromApiRepository extends StudentRepository {
       });
       //developer.debugger();
       checkResponseAndThrowExceptionIfSomethingWentWrong(response);
-      return studentFromJson(response.body);
+      developer.log('[${response.body.length}][${response.body}]',name:'api_repo.save');
+
+      // Por alguna extraña razón la respuesta de este endpoint no requiere convertirse a utf-8
+      // (Quizá porque los valores retornados no son leidos de la base de datos)
+      var ret=studentFromJson(response.body);
+      developer.log('ret:[$ret]',name:'api_repo.save');
+      return ret;
     } on IOException {
       throw NetworkException();
     }
@@ -68,7 +74,7 @@ class StudentsFromApiRepository extends StudentRepository {
         HttpHeaders.acceptHeader: 'application/json',
       });
       checkResponseAndThrowExceptionIfSomethingWentWrong(response);
-      final status = statusFromJson(response.body);
+      final status = statusFromJson(Utf8Decoder().convert(response.body.codeUnits));
       return status.status;
     } on IOException {
       throw NetworkException();

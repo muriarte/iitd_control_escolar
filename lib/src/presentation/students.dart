@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     selectedItem: (cubit.state as StudentListingLoadedState)
                         .selectedStudent,
                   )
-                : Text("No hay estudiantesa registrados"),
+                : Text("No hay estudiantes registrados"),
           ),
         ),
         BlocProvider<StudentDetailsBloc>.value(

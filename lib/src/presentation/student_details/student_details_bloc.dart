@@ -7,7 +7,8 @@ class StudentDetailsBloc extends Cubit<StudentDetailsState> {
 
   /// Establece el estudiante asociado a este estado
   Future<void> setStudent(Student item) async {
-    final newState = StudentLoadedState(item, false, false);
+    final isEditing = item.id == 0;
+    final newState = StudentLoadedState(item, isEditing, false);
     emit(newState);
   }
 

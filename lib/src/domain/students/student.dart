@@ -87,6 +87,28 @@ class Student {
       this.observaciones,
       this.activo);
 
+  Student.newEmpty() {
+    id = 0;
+    nombres = '';
+    apellidos = '';
+    nacimiento = DateTime(2000, 1, 1);
+    sexo = 'M';
+    calle = '';
+    numeroExt = '';
+    numeroInt = '';
+    colonia = '';
+    municipio = '';
+    estado = '';
+    pais = 'México'; //utf8.decode(utf8.encode('México'));
+    cp = '';
+    telCelular = '';
+    telCasa = '';
+    email = '';
+    fechaInicio = DateTime.now();
+    observaciones = '';
+    activo = 'S';
+  }
+
   /// Crea un nuevo estudiante inicializando sus propiedades con los valores de otro estudiante
   Student.byObject(Student obj) {
     copyProps(obj);
