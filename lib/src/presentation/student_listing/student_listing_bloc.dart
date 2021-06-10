@@ -74,20 +74,21 @@ class StudentListingBloc extends Cubit<StudentListingState> {
   }
 
   /// Nuevo estudiante
-  Future<void> newItem() async {
-    final st = state as StudentListingLoadedState;
+  Future<Student> newItem() async {
     var student = Student.newEmpty();
-    emit(StudentListingLoadedState.withDifferentiator(
-        st.students,
-        student,
-        st.differentiator + 1,
-        st.showFilters,
-        st.nameFilter,
-        st.activesFilter));
+    // final st = state as StudentListingLoadedState;
+    // emit(StudentListingLoadedState.withDifferentiator(
+    //     st.students,
+    //     student,
+    //     st.differentiator + 1,
+    //     st.showFilters,
+    //     st.nameFilter,
+    //     st.activesFilter));
+    return student;
   }
 
   /// Actualiza los datos del estudiante
-  Future<void> updateItem(Student student) async {
+  Future<Student> updateItem(Student student) async {
     final isNew = student.id == 0;
     final st = state as StudentListingLoadedState;
     var studentSaved = await studentsRepo.save(student);
@@ -110,6 +111,8 @@ class StudentListingBloc extends Cubit<StudentListingState> {
         st.showFilters,
         st.nameFilter,
         st.activesFilter));
+
+    return studentSaved;
   }
 
   /// Solicita confirmacion para eliminar estudiante

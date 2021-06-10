@@ -131,7 +131,9 @@ class StudentListing extends StatelessWidget {
             right: 30,
             bottom: 15,
             child: FloatingActionButton(
-              onPressed: () => {_cubit.newItem()},
+              onPressed: () => {
+                _cubit.newItem().then((value) => itemSelectedCallback(value))
+              },
               child: const Icon(Icons.add_outlined),
             ),
           ),

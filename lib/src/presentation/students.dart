@@ -98,19 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Navigator.of(context).pop();
                 BlocProvider.of<StudentListingBloc>(context).getStudentList();
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (BuildContext context) {
-                //       var cubit = BlocProvider.of<StudentListingBloc>(context);
-                //       return StudentListing(
-                //         itemSelectedCallback: (item) {
-                //           cubit.setSelectedItem(item);
-                //         },
-                //       );
-                //     },
-                //   ),
-                //   //(route) => true,
-                // );
               },
             ),
             ListTile(
@@ -131,25 +118,28 @@ class _MyHomePageState extends State<MyHomePage> {
     developer.log("Building mobile layout", name: "home_page");
     return StudentListing(
       itemSelectedCallback: (item) {
-        // developer.log("Mobile ItemSelectedCallback: ${item.firstName}\r\n");
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) {
-              BlocProvider.of<StudentListingBloc>(context)
-                  .setSelectedItem(item);
-              studentCubit.setStudent(item);
-              return BlocProvider<StudentDetailsBloc>.value(
-                value: studentCubit,
-                child: StudentDetails(
-                  isInTabletLayout: false,
-                  item: item,
-                ),
-              );
-            },
-          ),
-        );
+        navigateToStudentDetails(item);
       },
+    );
+  }
+
+  void navigateToStudentDetails(Student item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          BlocProvider.of<StudentListingBloc>(context)
+              .setSelectedItem(item);
+          studentCubit.setStudent(item);
+          return BlocProvider<StudentDetailsBloc>.value(
+            value: studentCubit,
+            child: StudentDetails(
+              isInTabletLayout: false,
+              item: item,
+            ),
+          );
+        },
+      ),
     );
   }
 

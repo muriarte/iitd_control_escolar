@@ -317,7 +317,7 @@ class _StudentDetailsState extends State<StudentDetails> {
                   isEditing: isEditing,
                   textController: activoController,
                   validator: Validators.sn,
-                        maxLength: 1,
+                  maxLength: 1,
                 ),
               ],
             ),
@@ -434,7 +434,8 @@ class _StudentDetailsState extends State<StudentDetails> {
       //cub.save();
       cub.setEditing(false);
       BlocProvider.of<StudentListingBloc>(context)
-          .updateItem((cub.state as StudentLoadedState).student!);
+          .updateItem((cub.state as StudentLoadedState).student!)
+          .then((value) => cub.setStudent(value));
     } else {
       // Form is invalid
       cub.setValidate(true);
