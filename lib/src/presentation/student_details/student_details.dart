@@ -83,8 +83,8 @@ class _StudentDetailsState extends State<StudentDetails> {
       nombresController.value = TextEditingValue(text: student?.nombres ?? "");
       apellidosController.value =
           TextEditingValue(text: student?.apellidos ?? "");
-      nacimientoController.value =
-          TextEditingValue(text: student?.nacimiento.toString() ?? "");
+      nacimientoController.value = TextEditingValue(
+          text: student?.nacimiento.toString().substring(0, 10) ?? "");
       sexoController.value = TextEditingValue(text: student?.sexo ?? "");
       calleController.value = TextEditingValue(text: student?.calle ?? "");
       numeroExtController.value =
@@ -102,7 +102,7 @@ class _StudentDetailsState extends State<StudentDetails> {
       telCasaController.value = TextEditingValue(text: student?.telCasa ?? "");
       emailController.value = TextEditingValue(text: student?.email ?? "");
       fechaInicioController.value =
-          TextEditingValue(text: student?.fechaInicio.toString() ?? "");
+          TextEditingValue(text: student?.fechaInicio.toString().substring(0,10) ?? "");
       observacionesController.value =
           TextEditingValue(text: student?.observaciones ?? "");
       activoController.value = TextEditingValue(text: student?.activo ?? "N");
